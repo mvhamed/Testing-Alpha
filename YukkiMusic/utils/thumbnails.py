@@ -29,9 +29,9 @@ def changeImageSize(maxWidth, maxHeight, image):
     return image.resize((newWidth, newHeight))
 
 
-async def gen_thumb(videoid):
-    if os.path.isfile(f"cache/{videoid}.png"):
-        return f"cache/{videoid}.png"
+async def gen_thumb(videoid, photo):
+    if os.path.isfile(f"{photo}.png"):
+        return f"{photo}.png"
 
     url = f"https://www.youtube.com/watch?v={videoid}"
     try:
@@ -41,6 +41,8 @@ async def gen_thumb(videoid):
                 title = result["title"]
                 title = re.sub("\W+", " ", title)
                 title = title.title()
+                test = translator.translate(title, dest="en")
+                title = test.text
             except:
                 title = "Unsupported Title"
             try:
@@ -61,7 +63,7 @@ async def gen_thumb(videoid):
             async with session.get(thumbnail) as resp:
                 if resp.status == 200:
                     f = await aiofiles.open(
-                        f"cache/thumb{videoid}.png", mode="wb"
+                        f"thumb{videoid}.png", mode="wb"
                     )
                     await f.write(await resp.read())
                     await f.close()
